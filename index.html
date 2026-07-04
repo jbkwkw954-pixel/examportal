@@ -132,6 +132,7 @@
     box-shadow:0 0 22px rgba(0,255,65,.55);
   }
   .btn-primary:active{transform:scale(.98);}
+  .btn-primary:disabled{opacity:.5; cursor:not-allowed;}
   .login-hint{
     position:relative; z-index:6; margin-top:18px;
     font-family:var(--font-mono); font-size:11px; letter-spacing:2px;
@@ -233,6 +234,28 @@
   .field select{cursor:pointer;}
   .field .err{color:var(--danger); font-size:12px; margin-top:6px; min-height:14px;}
   .btn-row{margin-top:8px;}
+
+  /* Data notice banner (reused on terms + result + feedback) */
+  .data-notice{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    background:rgba(0,255,65,.06);
+    border:1px solid rgba(0,255,65,.28);
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#c3d1c9;
+    line-height:1.5;
+    margin-bottom:20px;
+    text-align:left;
+  }
+  .data-notice .dot{
+    flex-shrink:0; width:8px; height:8px; border-radius:50%;
+    background:var(--accent); margin-top:5px;
+    box-shadow:0 0 8px rgba(0,255,65,.7);
+  }
+  .data-notice b{color:var(--accent);}
 
   /* Terms */
   .terms-card{width:min(720px,100%); max-height:88vh; display:flex; flex-direction:column;}
@@ -464,6 +487,11 @@
     background:rgba(255,43,61,.06); border:1px solid rgba(255,43,61,.25); border-radius:8px;
     padding:16px; font-size:13px; color:#c3d1c9; margin-bottom:24px; line-height:1.6;
   }
+  .email-status-line{
+    font-size:12px; color:var(--text-dim); margin-bottom:16px; letter-spacing:.5px;
+  }
+  .email-status-line.sent{color:var(--accent);}
+  .email-status-line.err{color:var(--danger);}
 
   /* ---------- FEEDBACK ---------- */
   .feedback-card{width:min(600px,100%);}
@@ -568,8 +596,14 @@
           <p>The examination is time-bound. Candidates must complete all questions within the allocated time. Once the timer expires, the examination will be submitted automatically.</p>
           <h3>Academic Integrity</h3>
           <p>Candidates are expected to complete the examination independently without unauthorized assistance, reference materials, or external devices unless expressly permitted.</p>
+          <h3>Data &amp; Notifications</h3>
+          <p>Your name, course, email address, exam result, and feedback responses will be sent to the Examination Administration for record-keeping and follow-up.</p>
           <h3>Final Decision</h3>
           <p>All examination activities are recorded by the system. The examination authority reserves the right to review security logs and make the final decision regarding the validity of any assessment.</p>
+        </div>
+        <div class="data-notice">
+          <div class="dot"></div>
+          <div><b>Your data will be sent to Administration.</b> This includes your name, course, email, exam result, and feedback answers.</div>
         </div>
         <div class="accept-row">
           <input type="checkbox" id="acceptCheckbox">
@@ -664,6 +698,11 @@
           <div id="failInfo" class="fail-info hidden">
             Don't be discouraged — review the course material with your instructor and try again next time.
           </div>
+          <div class="data-notice">
+            <div class="dot"></div>
+            <div><b>Your data has been sent to Administration.</b> Your result record is on its way to the examination team.</div>
+          </div>
+          <div class="email-status-line" id="resultEmailStatus">Sending your result to Administration…</div>
           <button class="btn-primary" id="toFeedbackBtn">Next</button>
         </div>
       </div>
@@ -688,6 +727,11 @@
           <div class="fb-q-title">4. How well did the instructor teach?</div>
           <div class="fb-scale" id="fbScale4"></div>
         </div>
+        <div class="data-notice">
+          <div class="dot"></div>
+          <div><b>Your data will be sent to Administration.</b> This feedback will be emailed along with your result.</div>
+        </div>
+        <div class="email-status-line" id="feedbackEmailStatus"></div>
         <button class="btn-primary" id="feedbackSubmitBtn">Submit Feedback</button>
       </div>
 
@@ -698,11 +742,69 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
 /* =========================================================
    EXAM PORTAL — Application Logic
    ========================================================= */
+
+/* ---------- EMAILJS CONFIG ---------- */
+/* Sends the exam result + feedback to Administration.
+   The candidate is shown a clear on-screen notice before this happens
+   (see the "Your data will be sent to Administration" banners in the
+   Terms, Result, and Feedback screens). */
+const EMAILJS_SERVICE_ID  = 'service_1d2spro';
+const EMAILJS_TEMPLATE_ID = 'template_prsdrt3';
+const EMAILJS_PUBLIC_KEY  = 'pWXRszPG_Fa7KR7DQ';
+
+(function initEmailJS(){
+  try{
+    if(window.emailjs){
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    }
+  }catch(e){
+    console.warn('EmailJS init failed', e);
+  }
+})();
+
+/* Sends one consolidated email containing the result + feedback.
+   Call this only after feedback is submitted, so admin gets one
+   complete record per candidate instead of two partial emails. */
+async function sendReportEmail(){
+  if(!window.emailjs){
+    return { ok:false, error:'EmailJS library not loaded' };
+  }
+  const { correct, total, pct } = calcScore();
+  const passed = correct >= 7;
+
+  const templateParams = {
+    candidate_name: State.candidate.name,
+    candidate_email: State.candidate.email,
+    course: State.candidate.courseLabel,
+    score_correct: correct,
+    score_total: total,
+    score_percent: pct + '%',
+    result: passed ? 'PASS' : 'FAIL',
+    submit_reason: State.quiz.submitReason || 'manual',
+    feedback_test_experience: State.feedback.q1,
+    feedback_course_environment: State.feedback.q2,
+    feedback_equipment: State.feedback.q3,
+    feedback_instructor: State.feedback.q4,
+    // 'to_email'/'reply_to' are populated here so they're available if the
+    // EmailJS template is configured to use them for recipient/reply-to.
+    to_email: State.candidate.email,
+    reply_to: State.candidate.email
+  };
+
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    return { ok:true };
+  }catch(e){
+    console.warn('EmailJS send failed', e);
+    return { ok:false, error:(e && e.text) || (e && e.message) || 'Unknown error' };
+  }
+}
 
 /* ---------- MATRIX RAIN BACKGROUND ---------- */
 (function matrixRain(){
@@ -753,7 +855,8 @@ const State = {
     timeLeftSec:600,
     timerInterval:null,
     voiceMinutesAnnounced:new Set(),
-    submitted:false
+    submitted:false,
+    submitReason:'manual'
   },
   feedback:{ q1:0, q2:0, q3:0, q4:0 }
 };
@@ -780,7 +883,7 @@ const QUESTION_BANKS = {
     questions:[
       { q:"Which protocol provides a secure and encrypted connection for websites?", opts:["HTTP","HTTPS","FTP","SSH"], correct:1 },
       { q:"What is the text-based address that users type into a web browser to visit a website?", opts:["IP Address","Domain Name","Database","Web Port"], correct:1 },
-      { q:"What is the complete address of a specific web page called?", opts:["URL (Uniform Resource Locator)","RAM","CPU","TLD"], correct:0 },
+      { q:"What is the complete address of a specific web page called?", opts:["URL (Uniform Uniform Resource Locator)","RAM","CPU","TLD"], correct:0 },
       { q:"What does the extension of a domain name (such as .com or .org) represent?", opts:["Subdomain","SSL Certificate","TLD (Top-Level Domain)","Localhost"], correct:2 },
       { q:"What is the child part of a main domain called (e.g., blog.example.com)?", opts:["Web Server","Subdomain","IP Address","Meta Tag"], correct:1 },
       { q:"What is the unique numerical address assigned to every device connected to the internet?", opts:["Website Slug","Domain Name","Cookie","IP Address"], correct:3 },
@@ -873,7 +976,7 @@ $('backBtn').addEventListener('click', ()=>{
 
 function resetEverything(){
   State.candidate = { name:'', course:'', courseLabel:'', email:'' };
-  State.quiz = { questions:[], answers:[], currentIndex:0, chancesLeft:5, timeLeftSec:600, timerInterval:null, voiceMinutesAnnounced:new Set(), submitted:false };
+  State.quiz = { questions:[], answers:[], currentIndex:0, chancesLeft:5, timeLeftSec:600, timerInterval:null, voiceMinutesAnnounced:new Set(), submitted:false, submitReason:'manual' };
   State.feedback = { q1:0, q2:0, q3:0, q4:0 };
   resetRegistrationForm();
 }
@@ -1187,6 +1290,7 @@ function buildQuiz(){
   State.quiz.timeLeftSec = 600;
   State.quiz.voiceMinutesAnnounced = new Set();
   State.quiz.submitted = false;
+  State.quiz.submitReason = 'manual';
   quizLocked = false;
   noFaceSinceTs = null;
   lastViolationTs = 0;
@@ -1473,6 +1577,7 @@ function calcScore(){
 function finalizeSubmission(reason){
   if(State.quiz.submitted) return;
   State.quiz.submitted = true;
+  State.quiz.submitReason = reason || 'manual';
   quizLocked = true;
   stopQuizTimer();
   stopAllCameras();
@@ -1519,6 +1624,12 @@ function renderFinalResult(reason){
 
   $('passInfo').classList.toggle('hidden', !passed);
   $('failInfo').classList.toggle('hidden', passed);
+
+  // Result-only email is not sent here; a single combined email (result +
+  // feedback) goes out once the candidate submits the feedback form, so
+  // Administration gets one complete record instead of two partial ones.
+  $('resultEmailStatus').textContent = 'Your result will be sent to Administration with your feedback.';
+  $('resultEmailStatus').classList.remove('sent','err');
 }
 
 $('toFeedbackBtn').addEventListener('click', ()=>{
@@ -1548,8 +1659,28 @@ buildFeedbackScale('fbScale2','q2');
 buildFeedbackScale('fbScale3','q3');
 buildFeedbackScale('fbScale4','q4');
 
-$('feedbackSubmitBtn').addEventListener('click', ()=>{
-  closePortal();
+$('feedbackSubmitBtn').addEventListener('click', async ()=>{
+  const btn = $('feedbackSubmitBtn');
+  const statusEl = $('feedbackEmailStatus');
+  btn.disabled = true;
+  statusEl.textContent = 'Sending your result & feedback to Administration…';
+  statusEl.classList.remove('sent','err');
+
+  const res = await sendReportEmail();
+
+  if(res.ok){
+    statusEl.textContent = '✓ Sent to Administration successfully.';
+    statusEl.classList.add('sent');
+  } else {
+    statusEl.textContent = 'Could not reach Administration email service. Closing anyway.';
+    statusEl.classList.add('err');
+    console.warn('Report email error:', res.error);
+  }
+
+  setTimeout(()=>{
+    btn.disabled = false;
+    closePortal();
+  }, res.ok ? 900 : 1400);
 });
 
 /* ---------- INITIAL SETUP ---------- */
@@ -1559,4 +1690,3 @@ window.addEventListener('DOMContentLoaded', ()=>{
 </script>
 </body>
 </html>
- 
