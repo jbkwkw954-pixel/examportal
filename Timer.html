@@ -638,10 +638,18 @@
 </div>
 
 <script>
+          
 (function(){
   const OWNER_KEY = "COAS23";
-
   const PORTAL_URL = "https://jbkwkw954-pixel.github.io/examportal";
+
+  // --- AUTOMATIC TARGET FIXED DATE CODE ---
+  // JavaScript me Month index 0 se shuru hota hai (0=Jan, 1=Feb... 6=July)
+  // Target: 6 July 2026 at 8:30:00 AM
+  const TARGET_TIME = new Date(2026, 6, 6, 8, 30, 0).getTime(); 
+  
+  // Progress Ring ki animation ke liye total time frame (e.g. 4 July ki shaam se lekar 6 July subah tak ka total duration)
+  const TOTAL_DURATION = TARGET_TIME - new Date(2026, 6, 4, 19, 0, 0).getTime(); 
 
   const digitsEl = document.getElementById('digits');
   const statusEl = document.getElementById('statusLabel');
@@ -660,44 +668,22 @@
   ringFg.style.strokeDasharray = CIRC;
   ringFg.style.strokeDashoffset = 0;
 
-  const STORE_KEY = 'chronoCoreTimerState_v1';
-  let state = null;
-  let totalDuration = 0;
   let tickHandle = null;
-
-  function loadState(){
-    try{
-      const raw = localStorage.getItem(STORE_KEY);
-      if(raw) return JSON.parse(raw);
-    }catch(e){}
-    return null;
-  }
-  function saveState(s){
-    try{ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){}
-  }
 
   function fmt(n){ return n.toString().padStart(2,'0'); }
 
   function render(){
-    if(!state || !state.endTime){
-      digitsEl.textContent = "00:00:00";
-      statusEl.textContent = "standby";
-      ringFg.style.strokeDashoffset = 0;
-      expiredBurst.style.display = 'none';
-      ringWrap.style.display = 'block';
-      portalOverlay.style.display = 'none';
-      return;
-    }
     const now = Date.now();
-    const remainMs = state.endTime - now;
+    const remainMs = TARGET_TIME - now;
 
+    // Jab time khatam ho jaye (Monday 8:30 AM par)
     if(remainMs <= 0){
       digitsEl.textContent = "00:00:00";
-      statusEl.textContent = state.label ? state.label : "expired";
+      statusEl.textContent = "EXAM PORTAL READY";
       ringFg.style.strokeDashoffset = CIRC;
       expiredBurst.style.display = 'none';
       ringWrap.style.display = 'none';
-      portalOverlay.style.display = 'block';
+      portalOverlay.style.display = 'block'; // Portal button automatic open ho jayega
       if(tickHandle){ clearInterval(tickHandle); tickHandle = null; }
       return;
     }
@@ -705,15 +691,16 @@
     expiredBurst.style.display = 'none';
     ringWrap.style.display = 'block';
     portalOverlay.style.display = 'none';
+    
     const totalSec = Math.floor(remainMs/1000);
     const h = Math.floor(totalSec/3600);
     const m = Math.floor((totalSec%3600)/60);
     const s = totalSec%60;
+    
     digitsEl.textContent = `${fmt(h)}:${fmt(m)}:${fmt(s)}`;
-    statusEl.textContent = state.label ? state.label : "counting down";
+    statusEl.textContent = "QUIZ WEEKLY TEST COUNTDOWN";
 
-    const dur = state.duration || 1;
-    const frac = Math.max(0, Math.min(1, remainMs / dur));
+    const frac = Math.max(0, Math.min(1, remainMs / TOTAL_DURATION));
     ringFg.style.strokeDashoffset = CIRC * (1 - frac);
   }
 
@@ -723,16 +710,10 @@
     tickHandle = setInterval(render, 1000);
   }
 
-  state = loadState();
+  // Timer ko auto-start kar rahe hain
   startTicking();
 
-  window.addEventListener('storage', function(e){
-    if(e.key === STORE_KEY){
-      state = loadState();
-      startTicking();
-    }
-  });
-
+  // Admin Panel Inputs (Inko ab manually cherne ki zaroorat nahi, yeh auto-mode par hain)
   const passInput = document.getElementById('passInput');
   const unlockBtn = document.getElementById('unlockBtn');
   const msg = document.getElementById('msg');
@@ -755,7 +736,7 @@
       msg.className = '';
       passInput.value = '';
     } else {
-      msg.textContent = 'ACCESS DENIED — WRONG PASSWORD';
+      msg.textContent = 'ACCESS DENIED — GALAT KEY';
       msg.className = 'err';
       passInput.value = '';
     }
@@ -771,35 +752,16 @@
   });
 
   startBtn.addEventListener('click', function(){
-    const h = parseInt(hIn.value)||0;
-    const m = parseInt(mIn.value)||0;
-    const s = parseInt(sIn.value)||0;
-    const totalMs = ((h*3600)+(m*60)+s) * 1000;
-    if(totalMs <= 0){
-      msg2.textContent = 'Kam az kam 1 second daaliye.';
-      msg2.style.color = '#ff5c7a';
-      return;
-    }
-    const now = Date.now();
-    state = {
-      endTime: now + totalMs,
-      duration: totalMs,
-      label: eventLabel.value.trim()
-    };
-    saveState(state);
-    startTicking();
-    msg2.textContent = 'Timer Set ';
+    msg2.textContent = 'Timer is running automatically via Code.';
     msg2.style.color = 'var(--neon-green)';
   });
 
   resetBtn.addEventListener('click', function(){
-    state = null;
-    saveState(null);
-    startTicking();
-    msg2.textContent = 'Timer Reset';
+    msg2.textContent = 'Reset locked (Auto-Temporal Mode Active)';
     msg2.style.color = 'var(--neon-pink)';
   });
 
+  // --- Particles Background Animation ---
   const pCanvas = document.getElementById('particles');
   const pCtx = pCanvas.getContext('2d');
   let particles = [];
@@ -852,6 +814,7 @@
   initParticles();
   animateParticles();
 
+  // --- Code Rain Animation ---
   const rCanvas = document.getElementById('codeRain');
   const rCtx = rCanvas.getContext('2d');
   const glyphs = "01アイウエオカキクケコ<>{}[]/*+-=;#$%".split('');
@@ -889,6 +852,8 @@
   resizeRain();
   animateRain();
 })();
+
+
 </script>
 </body>
 </html>
