@@ -18,6 +18,7 @@
     --accent-2:#00c853;
     --danger:#ff2b3d;
     --warn:#ffb020;
+    --gold:#ffd166;
     --font-mono:'Courier New', 'Consolas', monospace;
     --font-ui:'Segoe UI', Arial, sans-serif;
   }
@@ -232,8 +233,14 @@
   .field input[type=text]{ text-transform:uppercase; }
   .field input:focus, .field select:focus{border-color:var(--accent);}
   .field select{cursor:pointer;}
+  .field select:disabled{opacity:.4; cursor:not-allowed;}
   .field .err{color:var(--danger); font-size:12px; margin-top:6px; min-height:14px;}
+  .field .hint-small{color:var(--text-dim); font-size:11.5px; margin-top:6px;}
   .btn-row{margin-top:8px;}
+  .block-msg{
+    background:rgba(255,43,61,.08); border:1px solid rgba(255,43,61,.35); color:#ffb3ba;
+    border-radius:8px; padding:12px 14px; font-size:13px; margin-bottom:18px; line-height:1.5; text-align:left;
+  }
 
   /* Data notice banner (reused on terms + result + feedback) */
   .data-notice{
@@ -256,6 +263,19 @@
     box-shadow:0 0 8px rgba(0,255,65,.7);
   }
   .data-notice b{color:var(--accent);}
+
+  /* Report preview (own weekly report shown at registration) */
+  .report-card{width:min(560px,100%); text-align:left;}
+  .report-badge{
+    display:inline-block; font-family:var(--font-mono); font-size:11px; letter-spacing:2px;
+    color:var(--accent); background:rgba(0,255,65,.08); border:1px solid rgba(0,255,65,.3);
+    padding:4px 12px; border-radius:20px; margin-bottom:14px;
+  }
+  .report-table{width:100%; border-collapse:collapse; margin:18px 0;}
+  .report-table tr{border-bottom:1px solid var(--border);}
+  .report-table td{padding:11px 4px; font-size:14px;}
+  .report-table td:first-child{color:var(--text-dim); width:42%;}
+  .report-table td:last-child{color:#fff; font-weight:600;}
 
   /* Terms */
   .terms-card{width:min(720px,100%); max-height:88vh; display:flex; flex-direction:column;}
@@ -461,23 +481,43 @@
   .cam-status.bad{background:rgba(255,43,61,.12); color:var(--danger); border-color:rgba(255,43,61,.4);}
 
   /* ---------- RESULT ---------- */
-  .result-card{width:min(560px,100%); text-align:center;}
-  .searching-wrap{padding:60px 20px;}
-  .spinner{
-    width:56px; height:56px; border:3px solid #182018; border-top-color:var(--accent);
-    border-radius:50%; margin:0 auto 24px; animation:spin 1s linear infinite;
-  }
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .searching-text{color:var(--text-dim); font-size:14px; letter-spacing:1px;}
+  .result-card{width:min(620px,100%); text-align:center;}
+  .searching-wrap{padding:30px 10px;}
+  #resultAnimCanvas{display:block; margin:0 auto 20px; border-radius:12px; background:#050a07;}
+  .searching-text{color:var(--text-dim); font-size:14px; letter-spacing:1px; min-height:18px;}
   .result-headline{font-size:34px; font-weight:800; margin-bottom:10px;}
   .result-headline.pass{color:var(--accent); text-shadow:0 0 20px rgba(0,255,65,.4);}
+  .result-headline.extra{color:var(--gold); text-shadow:0 0 16px rgba(255,209,102,.35);}
   .result-headline.fail{color:var(--danger);}
-  .result-sub{color:var(--text-dim); font-size:14px; margin-bottom:28px;}
-  .result-table{width:100%; border-collapse:collapse; margin-bottom:20px; text-align:left;}
-  .result-table tr{border-bottom:1px solid var(--border);}
-  .result-table td{padding:12px 4px; font-size:14px;}
-  .result-table td:first-child{color:var(--text-dim); width:40%;}
-  .result-table td:last-child{color:#fff; font-weight:600;}
+  .result-sub{color:var(--text-dim); font-size:14px; margin-bottom:22px;}
+
+  .extra-note{
+    background:rgba(255,209,102,.08); border:1px solid rgba(255,209,102,.35); color:#ffe6a8;
+    border-radius:8px; padding:14px 16px; font-size:13px; line-height:1.6; margin-bottom:20px; text-align:left;
+  }
+
+  /* Formal printable report */
+  .formal-report{
+    background:#fff; color:#111; border-radius:8px; padding:26px 28px; margin-bottom:22px; text-align:left;
+    border:1px solid #ddd;
+  }
+  .formal-report .fr-head{text-align:center; border-bottom:3px solid #0a3d1a; padding-bottom:12px; margin-bottom:16px;}
+  .formal-report .fr-school{font-size:18px; font-weight:800; letter-spacing:1px; color:#0a3d1a;}
+  .formal-report .fr-campus{font-size:12px; color:#555; margin-top:2px;}
+  .formal-report .fr-title{font-size:13px; letter-spacing:2px; text-transform:uppercase; color:#0a3d1a; margin-top:10px; font-weight:700;}
+  .formal-report table{width:100%; border-collapse:collapse; margin:14px 0;}
+  .formal-report table td{padding:9px 6px; font-size:13.5px; border-bottom:1px solid #eee;}
+  .formal-report table td:first-child{color:#555; width:44%;}
+  .formal-report table td:last-child{font-weight:700; color:#111;}
+  .formal-report .fr-verdict{
+    text-align:center; padding:14px; border-radius:8px; font-size:20px; font-weight:800; margin:16px 0; letter-spacing:1px;
+  }
+  .formal-report .fr-verdict.pass{background:#e6fbea; color:#0a6b2a; border:1px solid #b7ecc4;}
+  .formal-report .fr-verdict.extra{background:#fff8e6; color:#8a6400; border:1px solid #f3e0a6;}
+  .formal-report .fr-verdict.fail{background:#fdecee; color:#a3202f; border:1px solid #f5c1c8;}
+  .formal-report .fr-note{font-size:12px; color:#555; line-height:1.6; margin-top:10px;}
+  .formal-report .fr-foot{margin-top:18px; padding-top:12px; border-top:1px solid #eee; font-size:11px; color:#888; text-align:center;}
+
   .next-info{
     background:rgba(0,255,65,.06); border:1px solid rgba(0,255,65,.25); border-radius:8px;
     padding:16px; font-size:13px; color:#c3d1c9; margin-bottom:24px; line-height:1.6; text-align:left;
@@ -485,13 +525,22 @@
   .next-info b{color:var(--accent);}
   .fail-info{
     background:rgba(255,43,61,.06); border:1px solid rgba(255,43,61,.25); border-radius:8px;
-    padding:16px; font-size:13px; color:#c3d1c9; margin-bottom:24px; line-height:1.6;
+    padding:16px; font-size:13px; color:#c3d1c9; margin-bottom:24px; line-height:1.6; text-align:left;
+  }
+  .retake-info{
+    background:rgba(0,200,255,.06); border:1px solid rgba(0,200,255,.3); border-radius:8px;
+    padding:14px 16px; font-size:13px; color:#c3e6f5; margin-bottom:20px; line-height:1.6; text-align:left;
   }
   .email-status-line{
     font-size:12px; color:var(--text-dim); margin-bottom:16px; letter-spacing:.5px;
   }
   .email-status-line.sent{color:var(--accent);}
   .email-status-line.err{color:var(--danger);}
+  .result-btn-row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center;}
+  .result-btn-row .btn-primary, .result-btn-row .btn-secondary{width:auto; flex:1 1 auto; min-width:160px;}
+
+  /* Confetti */
+  #confettiCanvas{position:fixed; inset:0; z-index:9998; pointer-events:none;}
 
   /* ---------- FEEDBACK ---------- */
   .feedback-card{width:min(600px,100%);}
@@ -550,6 +599,7 @@
       <div class="card" id="regScreen">
         <h2>Candidate Registration</h2>
         <div class="sub">Please fill in your details to begin the examination process.</div>
+        <div id="regBlockMsg" class="block-msg hidden"></div>
         <div class="field">
           <label for="fullNameInput">Full Name</label>
           <input type="text" id="fullNameInput" placeholder="e.g. JOHN DOE">
@@ -565,6 +615,16 @@
           <div class="err" id="courseErr"></div>
         </div>
         <div class="field">
+          <label for="weekSelect">Select Week</label>
+          <select id="weekSelect">
+            <option value="">-- Choose a week --</option>
+            <option value="week1">Week 1</option>
+            <option value="week2">Week 2</option>
+          </select>
+          <div class="err" id="weekErr"></div>
+          <div class="hint-small">Pick which weekly test you are taking today.</div>
+        </div>
+        <div class="field">
           <label for="emailInput">Gmail Address</label>
           <input type="email" id="emailInput" placeholder="yourname@gmail.com">
           <div class="err" id="emailErr"></div>
@@ -572,6 +632,22 @@
         <div class="btn-row">
           <button class="btn-primary" id="regNextBtn">Next</button>
         </div>
+      </div>
+
+      <div class="card report-card hidden" id="reportScreen">
+        <div class="report-badge">YOUR WEEK 1 RECORD</div>
+        <h2>Welcome back, <span id="repName">—</span></h2>
+        <div class="sub">Here is the weekly report we already have on file for your Gmail address. This is only your own record — no one else's.</div>
+        <table class="report-table">
+          <tr><td>Course</td><td id="repCourse">—</td></tr>
+          <tr><td>Score</td><td id="repScore">—</td></tr>
+          <tr><td>Status</td><td id="repStatus">—</td></tr>
+        </table>
+        <div class="data-notice">
+          <div class="dot"></div>
+          <div>This is your personal report only. It is shown just to you, based on the Gmail address you typed in.</div>
+        </div>
+        <button class="btn-primary" id="reportContinueBtn">Continue</button>
       </div>
 
       <div class="card terms-card hidden" id="termsScreen">
@@ -596,6 +672,8 @@
           <p>The examination is time-bound. Candidates must complete all questions within the allocated time. Once the timer expires, the examination will be submitted automatically.</p>
           <h3>Academic Integrity</h3>
           <p>Candidates are expected to complete the examination independently without unauthorized assistance, reference materials, or external devices unless expressly permitted.</p>
+          <h3>One Retake Rule</h3>
+          <p>If a candidate does not pass, one retake attempt is allowed for the same test. After that retake, no further attempts will be permitted for the same course and week.</p>
           <h3>Data &amp; Notifications</h3>
           <p>Your name, course, email address, exam result, and feedback responses will be sent to the Examination Administration for record-keeping and follow-up.</p>
           <h3>Final Decision</h3>
@@ -679,30 +757,56 @@
 
       <div class="card result-card hidden" id="resultScreen">
         <div id="resultSearching" class="searching-wrap">
-          <div class="spinner"></div>
-          <div style="font-size:17px; color:#fff; margin-bottom:8px;">Thank you for Participating in International Course</div>
-          <div class="searching-text" id="searchingText">PLEASE WAIT…</div>
+          <canvas id="resultAnimCanvas" width="360" height="220"></canvas>
+          <div style="font-size:17px; color:#fff; margin-bottom:8px;">Thank you for taking part in this test</div>
+          <div class="searching-text" id="searchingText">Getting your result ready…</div>
         </div>
         <div id="resultFinal" class="hidden">
           <div class="result-headline" id="resultHeadline">—</div>
           <div class="result-sub" id="resultSub">—</div>
-          <table class="result-table">
-            <tr><td>Name</td><td id="rName">—</td></tr>
-            <tr><td>Course</td><td id="rCourse">—</td></tr>
-            <tr><td>Percentage</td><td id="rPercent">—</td></tr>
-            <tr><td>Result</td><td id="rResult">—</td></tr>
-          </table>
+
+          <div id="extraNote" class="extra-note hidden"></div>
+
+          <div class="formal-report" id="formalReport">
+            <div class="fr-head">
+              <div class="fr-school">THE STANDARD SCHOOL SYSTEM</div>
+              <div class="fr-campus">Head Faqirian Campus</div>
+              <div class="fr-title">Official Weekly Test Result Report</div>
+            </div>
+            <table>
+              <tr><td>Candidate Name</td><td id="frName">—</td></tr>
+              <tr><td>Gmail Address</td><td id="frEmail">—</td></tr>
+              <tr><td>Course</td><td id="frCourse">—</td></tr>
+              <tr><td>Week</td><td id="frWeek">—</td></tr>
+              <tr><td>Score</td><td id="frScore">—</td></tr>
+              <tr><td>Percentage</td><td id="frPercent">—</td></tr>
+              <tr><td>Date</td><td id="frDate">—</td></tr>
+            </table>
+            <div class="fr-verdict" id="frVerdict">—</div>
+            <div class="fr-note" id="frNote"></div>
+            <div class="fr-foot">The Standard School System • Secure Assessment Environment • This is a system-generated report.</div>
+          </div>
+
           <div id="passInfo" class="next-info hidden">
             Your next <b>weekly test</b> will be held on <b>next Monday</b>. Course material will be provided by your instructor.
           </div>
           <div id="failInfo" class="fail-info hidden">
-            Don't be discouraged — review the course material with your instructor and try again next time.
+            Don't be discouraged — review the course material with your instructor and try again.
           </div>
+          <div id="retakeInfo" class="retake-info hidden">
+            You still have <b>one retake</b> available for this test. Take your time, review the topics, and try again when you are ready.
+          </div>
+
           <div class="data-notice">
             <div class="dot"></div>
             <div><b>Your data has been sent to Administration.</b> Your result record is on its way to the examination team.</div>
           </div>
           <div class="email-status-line" id="resultEmailStatus">Sending your result to Administration…</div>
+
+          <div class="result-btn-row" style="margin-bottom:14px;">
+            <button class="btn-secondary" id="downloadReportBtn">Download Report (PDF)</button>
+            <button class="btn-secondary hidden" id="retakeBtn">Retake Assessment</button>
+          </div>
           <button class="btn-primary" id="toFeedbackBtn">Next</button>
         </div>
       </div>
@@ -739,10 +843,12 @@
   </div>
 
   <div class="cheat-flash" id="cheatFlash"><div class="cheat-flash-text">DON'T CHEAT</div></div>
+  <canvas id="confettiCanvas"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 /* =========================================================
@@ -768,6 +874,19 @@ const EMAILJS_PUBLIC_KEY  = 'Dfhib5BSDFcXAwyUP';
   }
 })();
 
+/* ---------- PASS / FAIL RULE (single source of truth) ----------
+   7 or more correct  -> full PASS (Congratulations)
+   exactly 6 correct  -> PASS, but with 1 extra "support mark" and a
+                         clear note explaining why (no Congratulations)
+   5 or fewer correct -> FAIL
+*/
+function getPassStatus(correct){
+  const realPass  = correct >= 7;
+  const extraPass = correct === 6;
+  const passed    = realPass || extraPass;
+  return { passed, realPass, extraPass };
+}
+
 /* Sends one consolidated email containing the result + feedback.
    Call this only after feedback is submitted, so admin gets one
    complete record per candidate instead of two partial emails. */
@@ -776,17 +895,20 @@ async function sendReportEmail(){
     return { ok:false, error:'EmailJS library not loaded' };
   }
   const { correct, total, pct } = calcScore();
-  const passed = correct >= 7;
+  const { passed, extraPass } = getPassStatus(correct);
 
   const templateParams = {
     candidate_name: State.candidate.name,
     candidate_email: State.candidate.email,
     course: State.candidate.courseLabel,
+    week: State.candidate.week === 'week2' ? 'Week 2' : 'Week 1',
     score_correct: correct,
     score_total: total,
     score_percent: pct + '%',
     result: passed ? 'PASS' : 'FAIL',
+    pass_note: extraPass ? 'Passed with 1 extra support mark (scored 6/10).' : '',
     submit_reason: State.quiz.submitReason || 'manual',
+    is_retake: State.isRetake ? 'Yes' : 'No',
     feedback_test_experience: State.feedback.q1,
     feedback_course_environment: State.feedback.q2,
     feedback_equipment: State.feedback.q3,
@@ -846,7 +968,7 @@ async function sendReportEmail(){
 
 /* ---------- APP STATE ---------- */
 const State = {
-  candidate:{ name:'', course:'', courseLabel:'', email:'' },
+  candidate:{ name:'', course:'', courseLabel:'', week:'', email:'' },
   quiz:{
     questions:[],
     answers:[],
@@ -858,10 +980,11 @@ const State = {
     submitted:false,
     submitReason:'manual'
   },
-  feedback:{ q1:0, q2:0, q3:0, q4:0 }
+  feedback:{ q1:0, q2:0, q3:0, q4:0 },
+  isRetake:false
 };
 
-/* ---------- QUESTION BANKS (kept fully separate, never mixed) ---------- */
+/* ---------- WEEK 1 QUESTION BANKS (unchanged from the original test) ---------- */
 const QUESTION_BANKS = {
   hardware:{
     label:"Introduction to Computer Hardware and Software",
@@ -883,7 +1006,7 @@ const QUESTION_BANKS = {
     questions:[
       { q:"Which protocol provides a secure and encrypted connection for websites?", opts:["HTTP","HTTPS","FTP","SSH"], correct:1 },
       { q:"What is the text-based address that users type into a web browser to visit a website?", opts:["IP Address","Domain Name","Database","Web Port"], correct:1 },
-      { q:"What is the complete address of a specific web page called?", opts:["URL (Uniform Uniform Resource Locator)","RAM","CPU","TLD"], correct:0 },
+      { q:"What is the complete address of a specific web page called?", opts:["URL (Uniform Resource Locator)","RAM","CPU","TLD"], correct:0 },
       { q:"What does the extension of a domain name (such as .com or .org) represent?", opts:["Subdomain","SSL Certificate","TLD (Top-Level Domain)","Localhost"], correct:2 },
       { q:"What is the child part of a main domain called (e.g., blog.example.com)?", opts:["Web Server","Subdomain","IP Address","Meta Tag"], correct:1 },
       { q:"What is the unique numerical address assigned to every device connected to the internet?", opts:["Website Slug","Domain Name","Cookie","IP Address"], correct:3 },
@@ -894,6 +1017,200 @@ const QUESTION_BANKS = {
     ]
   }
 };
+
+/* ---------- WEEK 2 QUESTION BANKS (50 questions each, sourced from the
+   uploaded question banks — 10 are shown per attempt, chosen the same
+   way every time for the same student, so retakes are consistent and
+   different students naturally see different sets). ---------- */
+const WEEK2_BANKS = {
+  wordpress:{
+    label:"WordPress Fundamentals",
+    questions:[
+      {q:"What is the welcome page of WordPress that shows a quick summary of everything?", opts:["Admin Bar","Dashboard","Media Library","Customizer"], correct:1},
+      {q:"What is the black bar at the very top of the website that gives quick links?", opts:["Admin Bar","Sidebar","Footer","Menu Bar"], correct:0},
+      {q:"Where do you write daily stories, blogs, or news on your website?", opts:["Pages","Media","Posts","Appearance"], correct:2},
+      {q:"Where do you make fixed pages like 'About Us' or 'Contact Us'?", opts:["Posts","Categories","Tags","Pages"], correct:3},
+      {q:"How do you put your posts into separate big groups or topics?", opts:["Categories","Tags","Widgets","Plugins"], correct:0},
+      {q:"What are the small keywords you attach to a post to show its topic?", opts:["Categories","Tags","Menus","Blocks"], correct:1},
+      {q:"Where are all your uploaded photos, videos, and music files saved?", opts:["Tools","Appearance","Media Library","Settings"], correct:2},
+      {q:"What is the main big photo that shows as the thumbnail for a post?", opts:["Featured Image","Background Image","Site Icon","Logo"], correct:0},
+      {q:"What tool do you use to change the whole design and look of your website?", opts:["Plugins","Themes","Widgets","Blocks"], correct:1},
+      {q:"What do you call the small apps that add new features like a chat box?", opts:["Themes","Tools","Plugins","Menus"], correct:2},
+      {q:"What is the standard, built-in page and post editor in WordPress?", opts:["Elementor","Divi","Classic Editor","Gutenberg Editor"], correct:3},
+      {q:"What are the small boxes used to put text, images, or headings in the editor?", opts:["Blocks","Widgets","Plugins","Tags"], correct:0},
+      {q:"Which block do you use to write normal sentences and paragraphs?", opts:["Heading Block","Paragraph Block","List Block","Code Block"], correct:1},
+      {q:"Which block do you use to make big titles and headings?", opts:["Text Block","Quote Block","Heading Block","Title Block"], correct:2},
+      {q:"What do you call a post that is saved but not yet open to the public?", opts:["Draft","Publish","Schedule","Trash"], correct:0},
+      {q:"What do you click to make your work live so everyone can see it?", opts:["Save","Publish","Update","Preview"], correct:1},
+      {q:"What do you do to make a post show up automatically at a future time?", opts:["Draft","Pending","Schedule","Trash"], correct:2},
+      {q:"Where do deleted posts and pages go temporarily?", opts:["Archive","Draft","Spam","Trash"], correct:3},
+      {q:"What is the list of links like Home, About, and Contact at the top called?", opts:["Menus","Widgets","Sidebar","Header"], correct:0},
+      {q:"What are the small tools like a search bar placed in the sidebar or footer?", opts:["Plugins","Widgets","Blocks","Categories"], correct:1},
+      {q:"What is the top part of the website that has the main logo and menu?", opts:["Footer","Sidebar","Header","Body"], correct:2},
+      {q:"What is the bottom part of the website that has copyright text?", opts:["Header","Sidebar","Banner","Footer"], correct:3},
+      {q:"What do you call the extra side column next to your main content?", opts:["Sidebar","Header","Footer","Main Content"], correct:0},
+      {q:"Where do you go to change colors and see the changes live on screen?", opts:["Dashboard","Customizer","Tools","Media Library"], correct:1},
+      {q:"What is the official name of your website called in WordPress?", opts:["Tagline","URL","Site Title","User Name"], correct:2},
+      {q:"What is the short line or slogan written under your website name?", opts:["Title","Heading","Link","Tagline"], correct:3},
+      {q:"What is the tiny website logo that shows up on the browser tab?", opts:["Site Icon (Favicon)","Featured Image","Gravatar","Banner"], correct:0},
+      {q:"Where do you see the notes and replies sent by your website visitors?", opts:["Users","Comments","Tools","Plugins"], correct:1},
+      {q:"What do you call fake, unwanted, or junk comments sent by internet bots?", opts:["Approved Comments","Trash Comments","Spam Comments","Pingbacks"], correct:2},
+      {q:"What do you call the accounts for people who can log in and work on the site?", opts:["Profiles","Contacts","Subscribers","Users"], correct:3},
+      {q:"Who is the main owner with full control over all website settings?", opts:["Administrator","Editor","Author","Contributor"], correct:0},
+      {q:"Which person can look at, change, and publish anyone's posts?", opts:["Author","Editor","Contributor","Subscriber"], correct:1},
+      {q:"Which person can write and publish only their own posts?", opts:["Editor","Contributor","Author","Administrator"], correct:2},
+      {q:"Which person can write a post but needs an Admin or Editor to publish it?", opts:["Subscriber","Author","Editor","Contributor"], correct:3},
+      {q:"Which basic user can only log in to see and change their own profile?", opts:["Subscriber","Contributor","Author","Editor"], correct:0},
+      {q:"What setting fixes the look and format of your website links?", opts:["Hyperlinks","Permalinks","Shortcodes","Tags"], correct:1},
+      {q:"Where do you go to change the site name, main email, and time zone?", opts:["Profile","Writing Settings","General Settings","Tools"], correct:2},
+      {q:"Where do you pick what to show on the front home page of your site?", opts:["Discussion Settings","Media Settings","Permalinks","Reading Settings"], correct:3},
+      {q:"Where do you change the rules for comments and turn them on or off?", opts:["Discussion Settings","Reading Settings","Privacy Settings","General Settings"], correct:0},
+      {q:"Where is the option to hide your website from Google search?", opts:["Search Engine Visibility","General Settings","Writing Settings","Tools Menu"], correct:0},
+      {q:"What section helps you import or export data to and from the website?", opts:["Plugins","Settings","Tools","Appearance"], correct:2},
+      {q:"What text is hidden behind a photo to tell Google what the photo shows?", opts:["Title Text","Caption","Description","Alt Text"], correct:3},
+      {q:"What is a small text code in square brackets that displays a big feature?", opts:["Shortcode","HTML Tag","Block Code","Plugin Link"], correct:0},
+      {q:"What do people use to type and send their name and email to you?", opts:["Signup Form","Contact Form","Comment Form","Order Form"], correct:1},
+      {q:"What is it called when you make your themes and plugins new, fresh, and safe?", opts:["Downgrades","Resets","Updates","Backups"], correct:2},
+      {q:"Where do you go to change your personal password and dashboard color theme?", opts:["Users List","Customizer","General Settings","Profile"], correct:3},
+      {q:"What option at the very top hides or shows items on your current screen?", opts:["Screen Options","Help Menu","Layout Settings","View Mode"], correct:0},
+      {q:"What do you call a text word that links you to another website page?", opts:["Permalink","Hyperlink","Shortcode","Anchor Tag"], correct:1},
+      {q:"What is the short summary or small intro teaser text of a blog post?", opts:["Tagline","Summary","Excerpt","Snippet"], correct:2},
+      {q:"What is the free marketplace where you search and download thousands of plugins?", opts:["Plugin Market","WordPress Store","Extension Center","Plugin Repository"], correct:3}
+    ]
+  },
+  hardware:{
+    label:"Introduction to Computer Hardware and Software",
+    questions:[
+      {q:"What numbers do computers understand?", opts:["1 and 2","0 and 1","5 and 10","A and B"], correct:1},
+      {q:"What is the smallest unit of data in a computer?", opts:["Byte","Bit","Kilobyte","Megabyte"], correct:1},
+      {q:"A group of how many bits makes a single Byte?", opts:["4 bits","6 bits","8 bits","10 bits"], correct:2},
+      {q:"What is the short form of Kilobyte?", opts:["KB","MB","GB","TB"], correct:0},
+      {q:"One Kilobyte (KB) is equal to how many Bytes?", opts:["100 Bytes","500 Bytes","1,024 Bytes","2,000 Bytes"], correct:2},
+      {q:"What is the short form of Megabyte?", opts:["KB","GB","MB","TB"], correct:2},
+      {q:"One Megabyte (MB) is equal to how many Kilobytes?", opts:["1,024 KB","100 KB","500 KB","10 KB"], correct:0},
+      {q:"What is the short form of Gigabyte?", opts:["MB","KB","GB","TB"], correct:2},
+      {q:"One Gigabyte (GB) is equal to how many Megabytes?", opts:["100 MB","1,024 MB","500 MB","2,000 MB"], correct:1},
+      {q:"What is the short form of Terabyte?", opts:["KB","MB","GB","TB"], correct:3},
+      {q:"What hardware parts are used to save files and programs permanently?", opts:["Monitors","Keyboards","Storage devices","Printers"], correct:2},
+      {q:"Which storage device uses spinning magnetic plates and a moving needle?", opts:["Solid State Drive (SSD)","Hard Disk Drive (HDD)","USB Flash Drive","CD-ROM"], correct:1},
+      {q:"Which modern storage device is much faster, quieter, and uses microchips?", opts:["Hard Disk Drive (HDD)","Solid State Drive (SSD)","Floppy Disk","Cassette Tape"], correct:1},
+      {q:"What is a tiny, portable storage tool that you can carry in your pocket?", opts:["Hard Disk Drive","USB Flash Drive","Mainframe Server","Desktop PC"], correct:1},
+      {q:"What are circular plastic discs that use a laser light beam to read data?", opts:["Hard Drives","Optical Discs (CD/DVD)","USB Drives","Microchips"], correct:1},
+      {q:"What is a computer network?", opts:["A broken computer","Two or more connected computers","A single offline laptop","A computer game"], correct:1},
+      {q:"Which network connects computers inside a small area like a school lab or room?", opts:["LAN (Local Area Network)","MAN","WAN","The Internet"], correct:0},
+      {q:"Which network connects multiple locations across a whole town or city?", opts:["LAN","MAN (Metropolitan Area Network)","WAN","Personal Network"], correct:1},
+      {q:"Which is the largest network that connects computers across the entire world?", opts:["LAN","MAN","WAN (Wide Area Network)","Home Network"], correct:2},
+      {q:"What is the best and most famous example of a global WAN?", opts:["A school lab","The Internet","A single printer cable","A home Wi-Fi box"], correct:1},
+      {q:"What do we call the physical map or arrangement showing how computers are connected?", opts:["Network Geography","Network Topology","Data Measurement","AI Tool"], correct:1},
+      {q:"In which topology are all computers connected to one single main cable?", opts:["Star Topology","Bus Topology","Ring Topology","Mesh Topology"], correct:1},
+      {q:"In which topology does every computer connect directly to a central box like a Hub or Switch?", opts:["Bus Topology","Star Topology","Ring Topology","Mesh Topology"], correct:1},
+      {q:"In a Star Topology, if one computer's wire breaks, what happens?", opts:["The whole network fails","Only that computer stops working","All computers turn off","The internet gets faster"], correct:1},
+      {q:"In which topology are computers connected in a circular loop?", opts:["Star Topology","Bus Topology","Ring Topology","Mesh Topology"], correct:2},
+      {q:"What does AI stand for?", opts:["Automatic Internet","Artificial Intelligence","Advanced Instrument","App Interface"], correct:1},
+      {q:"What is Artificial Intelligence (AI)?", opts:["A technology that makes machines 'smart'","A way to turn off computers","A physical robot body","A type of printer paper"], correct:0},
+      {q:"Can Artificial Intelligence work 24/7 without ever getting tired?", opts:["No, it gets tired","Yes, it works non-stop without fatigue","Only for 1 hour","Only on weekends"], correct:1},
+      {q:"How does AI learn?", opts:["By eating food","By sleeping","By reading and processing millions of digital files and data","By going to a human school"], correct:2},
+      {q:"Siri, Google Assistant, and Alexa are examples of what?", opts:["Storage devices","Voice Assistants","Network cables","Optical discs"], correct:1},
+      {q:"When YouTube or Netflix suggests videos based on what you like, what is it called?", opts:["Voice Recognition","Smart Recommendations","Bus Topology","Data Unit"], correct:1},
+      {q:"What do social apps use to scan your face and apply fun filters?", opts:["Hard Disk Drives","Face Recognition & AI algorithms","USB cables","Laser beams"], correct:1},
+      {q:"The computer bots/players you fight against in games like PUBG or chess use what?", opts:["Human brains inside the phone","AI layers to play smartly","Spinning magnetic plates","LAN cables"], correct:1},
+      {q:"Does AI have real biological emotions like true happiness or sadness?", opts:["Yes","No, it only mimics language patterns","Only when fully charged","Only text AI does"], correct:1},
+      {q:"Can AI start working completely by itself without any human data?", opts:["Yes, always","No, it strictly requires data and instructions from humans","Only at night","Yes, if it has Wi-Fi"], correct:1},
+      {q:"What does AI lack in sudden, unexpected scenarios?", opts:["A screen","Fundamental human common sense","Data speed","Electrical power"], correct:1},
+      {q:"What does the abbreviation ML stand for?", opts:["Main Link","Machine Learning","Mega Language","Memory Line"], correct:1},
+      {q:"What does the abbreviation NLP stand for?", opts:["Natural Language Processing","Network Link Protocol","New Laptop Program","Node Local Parameter"], correct:0},
+      {q:"What is Generative AI (GenAI)?", opts:["An AI that deletes photos","A creative AI that can make completely new things from scratch","An older storage device","A network wire"], correct:1},
+      {q:"How do you tell a Generative AI tool what you want it to build?", opts:["By using heavy coding","By giving it a command or description in simple language","By restarting the PC","By clicking the monitor"], correct:1},
+      {q:"ChatGPT and Google Gemini are famous examples of what?", opts:["Image AI tools","Text AI tools","Video animation tools","Storage hard drives"], correct:1},
+      {q:"Midjourney and DALL-E are famous examples of what?", opts:["Text AI tools","Image AI tools","Audio tools","Network wires"], correct:1},
+      {q:"Sora and ElevenLabs are famous examples of what?", opts:["Video & Audio AI tools","Text AI tools","Image AI tools","Network topologies"], correct:0},
+      {q:"What is a 'Prompt'?", opts:["A computer screen","The specific set of instructions or text you type into an AI tool","A LAN wire","A power button"], correct:1},
+      {q:"What happens if you give a very detailed and clear prompt to an AI?", opts:["The AI crashes","The AI gives a much better and accurate answer","The AI refuses to answer","The text turns into a wire"], correct:1},
+      {q:"What is a smart rule for kids when using AI for homework?", opts:["Copy-paste everything to cheat","Use it to generate ideas, brainstorm, or understand topics better","Let AI do 100% of your work","Never read what AI wrote"], correct:1},
+      {q:"What is it called when an AI model makes a mistake or invents fake facts?", opts:["AI Optimization","AI Hallucination","AI Networking","AI Storage"], correct:1},
+      {q:"What should you do to protect yourself against AI Hallucinations?", opts:["Trust the AI blindly","Always double-check facts with a book or your teacher","Stop using computers","Delete the browser"], correct:1},
+      {q:"What should you NEVER share with an online AI chatbot?", opts:["Your favorite color","Your real home address, passwords, or phone numbers","The name of a fruit","A simple hello message"], correct:1},
+      {q:"What does the abbreviation UI stand for?", opts:["User Interface","Universal Internet","Unit Identifier","Unique Instruction"], correct:0}
+    ]
+  }
+};
+
+/* ---------- WEEK 1 STUDENT REPORTS (from the 1st Weekly Test Performance
+   Report). Used to show a candidate their own past record when they type
+   their Gmail address at registration. Keyed by lowercase Gmail address. ---------- */
+const STUDENT_REPORTS = {
+  "tsssofficial2222.student002@gmail.com": {name:"REEBA SHABBIR",  course:"Intro to Computer Hardware & Software", score:7,  total:10, percent:70,  status:"PASS"},
+  "tsssofficial2222.student003@gmail.com": {name:"SOHAIL YAR",     course:"Intro to Computer Hardware & Software", score:7,  total:10, percent:70,  status:"PASS"},
+  "tsssofficial2222.student006@gmail.com": {name:"ALI HAMZA",      course:"Intro to Computer Hardware & Software", score:7,  total:10, percent:70,  status:"PASS"},
+  "tsssofficial2222.student007@gmail.com": {name:"FAIZAN ALI",     course:"Intro to Computer Hardware & Software", score:7,  total:10, percent:70,  status:"PASS"},
+  "tsssofficial2222.student008@gmail.com": {name:"FALAK SHAIR",    course:"Intro to Computer Hardware & Software", score:8,  total:10, percent:80,  status:"PASS"},
+  "tsssofficial2222.student009@gmail.com": {name:"ALI HAMZA",      course:"Intro to Computer Hardware & Software", score:9,  total:10, percent:90,  status:"PASS"},
+  "tsssofficial2222.student011@gmail.com": {name:"USMAN ALI",      course:"WordPress Fundamentals",                score:9,  total:10, percent:90,  status:"PASS"},
+  "tsssofficial2222.student012@gmail.com": {name:"EMAN FATIMA",    course:"WordPress Fundamentals",                score:8,  total:10, percent:80,  status:"PASS"},
+  "tsssofficial2222.student013@gmail.com": {name:"TAYYBA ANEES",   course:"WordPress Fundamentals",                score:7,  total:10, percent:70,  status:"PASS"},
+  "tsssofficial2222.student014@gmail.com": {name:"NIDA ARSHAD",    course:"WordPress Fundamentals",                score:7,  total:10, percent:70,  status:"PASS"},
+  "tsssofficial2222.student015@gmail.com": {name:"FAIZAN SAIF",    course:"Intro to Computer Hardware & Software", score:7,  total:10, percent:70,  status:"PASS"},
+  "tsssofficial2222.student016@gmail.com": {name:"HIRA SAIF",      course:"Intro to Computer Hardware & Software", score:9,  total:10, percent:90,  status:"PASS"},
+  "tsssofficial2222.student017@gmail.com": {name:"NOMAN ALI",      course:"Intro to Computer Hardware & Software", score:10, total:10, percent:100, status:"PASS"}
+};
+
+/* ---------- Deterministic "same student always gets the same 10
+   questions" picker for Week 2 (so re-logins don't reshuffle, but
+   different students naturally get different sets). ---------- */
+function hashString(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){
+    h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  }
+  return h;
+}
+function mulberry32(seed){
+  let a = seed;
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function pickWeek2Questions(bankQuestions, seedStr, count){
+  const rand = mulberry32(hashString(seedStr));
+  const indices = bankQuestions.map((_, i) => i);
+  for(let i = indices.length - 1; i > 0; i--){
+    const j = Math.floor(rand() * (i + 1));
+    const tmp = indices[i]; indices[i] = indices[j]; indices[j] = tmp;
+  }
+  const chosen = indices.slice(0, count).sort((a,b)=> a-b);
+  return chosen.map(i => ({...bankQuestions[i]}));
+}
+
+/* ---------- RETAKE TRACKING (per name + course + week) ----------
+   Stored in this browser's localStorage since this exam portal is a
+   real, standalone application meant to run on its own — not a
+   throwaway preview — so remembering attempts across visits is exactly
+   what "only 1 retake" requires. */
+const ATTEMPTS_KEY = 'examPortalAttempts_v1';
+function loadAttemptsStore(){
+  try{
+    const raw = localStorage.getItem(ATTEMPTS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function saveAttemptsStore(store){
+  try{ localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(store)); }catch(e){ /* ignore */ }
+}
+function makeAttemptKey(name, course, week){
+  return (name||'').trim().toUpperCase() + '|' + course + '|' + week;
+}
+function getAttemptRecord(key){
+  const store = loadAttemptsStore();
+  return store[key] || null;
+}
+function setAttemptRecord(key, data){
+  const store = loadAttemptsStore();
+  store[key] = data;
+  saveAttemptsStore(store);
+}
 
 /* ---------- SHARED CAMERA STREAM REFS (declared early to avoid TDZ issues) ---------- */
 let quizStream = null;
@@ -975,9 +1292,10 @@ $('backBtn').addEventListener('click', ()=>{
 });
 
 function resetEverything(){
-  State.candidate = { name:'', course:'', courseLabel:'', email:'' };
+  State.candidate = { name:'', course:'', courseLabel:'', week:'', email:'' };
   State.quiz = { questions:[], answers:[], currentIndex:0, chancesLeft:5, timeLeftSec:600, timerInterval:null, voiceMinutesAnnounced:new Set(), submitted:false, submitReason:'manual' };
   State.feedback = { q1:0, q2:0, q3:0, q4:0 };
+  State.isRetake = false;
   resetRegistrationForm();
 }
 
@@ -985,10 +1303,14 @@ function resetEverything(){
 function resetRegistrationForm(){
   $('fullNameInput').value = '';
   $('courseSelect').value = '';
+  $('weekSelect').value = '';
   $('emailInput').value = '';
   $('fullNameErr').textContent = '';
   $('courseErr').textContent = '';
+  $('weekErr').textContent = '';
   $('emailErr').textContent = '';
+  $('regBlockMsg').classList.add('hidden');
+  $('regBlockMsg').textContent = '';
 }
 
 $('fullNameInput').addEventListener('input', (e)=>{
@@ -1003,24 +1325,67 @@ $('regNextBtn').addEventListener('click', ()=>{
   let ok = true;
   const name = $('fullNameInput').value.trim();
   const course = $('courseSelect').value;
+  const week = $('weekSelect').value;
   const email = $('emailInput').value.trim();
 
   $('fullNameErr').textContent = '';
   $('courseErr').textContent = '';
+  $('weekErr').textContent = '';
   $('emailErr').textContent = '';
+  $('regBlockMsg').classList.add('hidden');
+  $('regBlockMsg').textContent = '';
 
   if(!name){ $('fullNameErr').textContent = 'Full name is required.'; ok = false; }
   if(!course){ $('courseErr').textContent = 'Please select a course.'; ok = false; }
+  if(!week){ $('weekErr').textContent = 'Please select a week.'; ok = false; }
   if(!email){ $('emailErr').textContent = 'Gmail address is required.'; ok = false; }
   else if(!validateEmail(email)){ $('emailErr').textContent = 'Please enter a valid Gmail address.'; ok = false; }
 
   if(!ok) return;
 
+  // Check retake / repeat-attempt rules for this exact test (name+course+week)
+  const attemptKey = makeAttemptKey(name, course, week);
+  const rec = getAttemptRecord(attemptKey);
+  if(rec){
+    if(rec.result === 'PASS'){
+      $('regBlockMsg').textContent = "You have already completed and passed this test (" + (week==='week2'?'Week 2':'Week 1') + "). This test cannot be taken again.";
+      $('regBlockMsg').classList.remove('hidden');
+      return;
+    }
+    if(rec.result === 'FAIL' && rec.retakeUsed){
+      $('regBlockMsg').textContent = "You already used your one retake for this test and it was not passed. No further attempts are available. Please speak with your instructor.";
+      $('regBlockMsg').classList.remove('hidden');
+      return;
+    }
+    // rec.result === 'FAIL' and retake not used yet -> this attempt is the retake
+    State.isRetake = true;
+  } else {
+    State.isRetake = false;
+  }
+
   State.candidate.name = name;
   State.candidate.course = course;
   State.candidate.courseLabel = QUESTION_BANKS[course].label;
+  State.candidate.week = week;
   State.candidate.email = email;
 
+  // Show the candidate's own Week 1 report if we recognize their Gmail
+  // address — only their own record, never anyone else's.
+  const reportMatch = STUDENT_REPORTS[email.toLowerCase()];
+  if(reportMatch){
+    $('repName').textContent = name;
+    $('repCourse').textContent = reportMatch.course;
+    $('repScore').textContent = reportMatch.score + ' / ' + reportMatch.total + ' (' + reportMatch.percent + '%)';
+    $('repStatus').textContent = reportMatch.status;
+    showScreen($('reportScreen'));
+  } else {
+    // No matching record on file — that's fine, simply continue,
+    // the system must never get stuck here.
+    showScreen($('termsScreen'));
+  }
+});
+
+$('reportContinueBtn').addEventListener('click', ()=>{
   showScreen($('termsScreen'));
 });
 
@@ -1282,8 +1647,16 @@ const VIOLATION_COOLDOWN_MS = 4000;
 let quizLocked = false;
 
 function buildQuiz(){
-  const bank = QUESTION_BANKS[State.candidate.course];
-  State.quiz.questions = bank.questions.map(q => ({...q}));
+  let questions;
+  if(State.candidate.week === 'week2'){
+    const bank = WEEK2_BANKS[State.candidate.course];
+    const seed = State.candidate.name.trim().toUpperCase() + '|' + State.candidate.course + '|week2';
+    questions = pickWeek2Questions(bank.questions, seed, 10);
+  } else {
+    const bank = QUESTION_BANKS[State.candidate.course];
+    questions = bank.questions.map(q => ({...q}));
+  }
+  State.quiz.questions = questions;
   State.quiz.answers = new Array(State.quiz.questions.length).fill(null);
   State.quiz.currentIndex = 0;
   State.quiz.chancesLeft = 5;
@@ -1380,7 +1753,7 @@ const LETTERS = ['A','B','C','D'];
 function renderQuestion(){
   const idx = State.quiz.currentIndex;
   const q = State.quiz.questions[idx];
-  $('qCourseTag').textContent = State.candidate.courseLabel;
+  $('qCourseTag').textContent = State.candidate.courseLabel + ' — ' + (State.candidate.week === 'week2' ? 'Week 2' : 'Week 1');
   $('qNumber').textContent = `Question ${idx+1} of ${State.quiz.questions.length}`;
   $('qText').textContent = q.q;
 
@@ -1585,26 +1958,154 @@ function finalizeSubmission(reason){
   showScreen($('resultScreen'));
   $('resultSearching').classList.remove('hidden');
   $('resultFinal').classList.add('hidden');
-  $('searchingText').textContent = 'PLEASE WAIT…';
+  runResultWaitAnimation(5000);
 
   setTimeout(()=>{
     renderFinalResult(reason);
   }, 5000);
 }
 
+/* ---------- Calm 5-second "processing" animation while the result is
+   being prepared. Slow drifting orbs + a gentle scanning ring, designed
+   to feel steady and reassuring rather than tense. ---------- */
+function runResultWaitAnimation(durationMs){
+  const canvas = $('resultAnimCanvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const cx = w/2, cy = h/2;
+  const startTs = performance.now();
+  const messages = [
+    'Getting your result ready…',
+    'Checking your answers…',
+    'Putting your report together…',
+    'Almost there…'
+  ];
+  let msgIndex = 0;
+  $('searchingText').textContent = messages[0];
+  const msgInterval = setInterval(()=>{
+    msgIndex = (msgIndex + 1) % messages.length;
+    $('searchingText').textContent = messages[msgIndex];
+  }, 1250);
+
+  const orbs = Array.from({length:8}, (_, i) => ({
+    angle: (i / 8) * Math.PI * 2,
+    radius: 55 + (i % 3) * 12,
+    speed: 0.4 + (i % 4) * 0.08,
+    size: 3 + (i % 3)
+  }));
+
+  function frame(now){
+    const t = now - startTs;
+    if(t > durationMs){
+      clearInterval(msgInterval);
+      return;
+    }
+    ctx.clearRect(0,0,w,h);
+    // soft glow backdrop
+    const grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, 110);
+    grad.addColorStop(0, 'rgba(0,255,65,0.10)');
+    grad.addColorStop(1, 'rgba(0,255,65,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,w,h);
+
+    // scanning ring
+    const ringPulse = 70 + Math.sin(t/500) * 8;
+    ctx.beginPath();
+    ctx.arc(cx, cy, ringPulse, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(0,255,65,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // orbiting orbs
+    orbs.forEach(o=>{
+      const ang = o.angle + (t/1000) * o.speed;
+      const x = cx + Math.cos(ang) * o.radius;
+      const y = cy + Math.sin(ang) * o.radius * 0.55;
+      ctx.beginPath();
+      ctx.arc(x, y, o.size, 0, Math.PI*2);
+      ctx.fillStyle = '#00ff41';
+      ctx.shadowColor = '#00ff41';
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    // center calm dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI*2);
+    ctx.fillStyle = '#eafff0';
+    ctx.fill();
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Gentle confetti burst shown only for a real (7+/10) pass ---------- */
+function launchConfetti(){
+  const canvas = $('confettiCanvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#00ff41','#00c853','#ffd166','#ffffff','#7fe6ff'];
+  const pieces = Array.from({length:110}, ()=> ({
+    x: Math.random()*canvas.width,
+    y: -20 - Math.random()*canvas.height*0.5,
+    size: 4 + Math.random()*5,
+    speed: 2 + Math.random()*3,
+    drift: (Math.random()-0.5)*2,
+    rot: Math.random()*Math.PI*2,
+    rotSpeed: (Math.random()-0.5)*0.2,
+    color: colors[Math.floor(Math.random()*colors.length)]
+  }));
+  const start = performance.now();
+  function frame(now){
+    const elapsed = now - start;
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    pieces.forEach(p=>{
+      p.y += p.speed;
+      p.x += p.drift;
+      p.rot += p.rotSpeed;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      ctx.restore();
+    });
+    if(elapsed < 2600){
+      requestAnimationFrame(frame);
+    } else {
+      ctx.clearRect(0,0,canvas.width, canvas.height);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
 function renderFinalResult(reason){
   const { correct, total, pct } = calcScore();
-  const passed = correct >= 7;
+  const { passed, realPass, extraPass } = getPassStatus(correct);
 
   $('resultSearching').classList.add('hidden');
   $('resultFinal').classList.remove('hidden');
 
   const headline = $('resultHeadline');
   const sub = $('resultSub');
-  if(passed){
+  const extraNoteEl = $('extraNote');
+  extraNoteEl.classList.add('hidden');
+  extraNoteEl.textContent = '';
+
+  if(realPass){
     headline.textContent = 'CONGRATULATIONS!';
     headline.className = 'result-headline pass';
     sub.textContent = 'You have successfully passed the examination.';
+    launchConfetti();
+  } else if(extraPass){
+    headline.textContent = 'YOU PASSED';
+    headline.className = 'result-headline extra';
+    sub.textContent = 'You reached the passing level for this test.';
+    extraNoteEl.textContent = 'You scored 6 out of 10. Since you were so close to the target, you have been given 1 extra mark and you have PASSED this weekly test. Please remember: starting from now, you will need at least 70% to pass future tests.';
+    extraNoteEl.classList.remove('hidden');
   } else {
     headline.textContent = 'Better luck next time.';
     headline.className = 'result-headline fail';
@@ -1617,19 +2118,172 @@ function renderFinalResult(reason){
     }
   }
 
-  $('rName').textContent = State.candidate.name;
-  $('rCourse').textContent = State.candidate.courseLabel;
-  $('rPercent').textContent = `${pct}% (${correct}/${total})`;
-  $('rResult').textContent = passed ? 'PASS' : 'FAIL';
+  // Formal report block
+  const now = new Date();
+  $('frName').textContent = State.candidate.name;
+  $('frEmail').textContent = State.candidate.email;
+  $('frCourse').textContent = State.candidate.courseLabel;
+  $('frWeek').textContent = State.candidate.week === 'week2' ? 'Week 2' : 'Week 1';
+  $('frScore').textContent = `${correct} / ${total}`;
+  $('frPercent').textContent = `${pct}%`;
+  $('frDate').textContent = now.toLocaleDateString();
+
+  const verdictEl = $('frVerdict');
+  const noteEl = $('frNote');
+  if(realPass){
+    verdictEl.textContent = 'RESULT: PASS';
+    verdictEl.className = 'fr-verdict pass';
+    noteEl.textContent = 'This candidate met the required passing standard.';
+  } else if(extraPass){
+    verdictEl.textContent = 'RESULT: PASS (1 extra mark given)';
+    verdictEl.className = 'fr-verdict extra';
+    noteEl.textContent = 'The candidate scored 6/10 and was given 1 extra mark for being close to the passing mark. Future tests require at least 70% to pass.';
+  } else {
+    verdictEl.textContent = 'RESULT: FAIL';
+    verdictEl.className = 'fr-verdict fail';
+    noteEl.textContent = 'The candidate did not meet the required passing standard for this test.';
+  }
+
+  $('rPercent') && null; // (legacy id no longer used)
 
   $('passInfo').classList.toggle('hidden', !passed);
   $('failInfo').classList.toggle('hidden', passed);
+
+  // Retake button — only offered on a genuine FAIL, and only if this
+  // attempt was not itself already a retake.
+  const retakeBtn = $('retakeBtn');
+  const retakeInfo = $('retakeInfo');
+  const retakeEligible = (!passed) && (!State.isRetake);
+  retakeBtn.classList.toggle('hidden', !retakeEligible);
+  retakeInfo.classList.toggle('hidden', !retakeEligible);
+
+  // Save the attempt record for the retake-limit rule.
+  const attemptKey = makeAttemptKey(State.candidate.name, State.candidate.course, State.candidate.week);
+  setAttemptRecord(attemptKey, {
+    result: passed ? 'PASS' : 'FAIL',
+    retakeUsed: State.isRetake ? true : false
+  });
 
   // Result-only email is not sent here; a single combined email (result +
   // feedback) goes out once the candidate submits the feedback form, so
   // Administration gets one complete record instead of two partial ones.
   $('resultEmailStatus').textContent = 'Your result will be sent to Administration with your feedback.';
   $('resultEmailStatus').classList.remove('sent','err');
+}
+
+$('retakeBtn').addEventListener('click', ()=>{
+  // Reset the quiz/result UI and go straight back into the terms screen,
+  // keeping the same candidate info (this attempt has already been
+  // recorded as the allowed retake).
+  $('resultFinal').classList.add('hidden');
+  $('resultSearching').classList.remove('hidden');
+  State.quiz.submitted = false;
+  showScreen($('termsScreen'));
+  $('acceptCheckbox').checked = false;
+  $('acceptBtn').disabled = true;
+});
+
+$('downloadReportBtn').addEventListener('click', ()=>{
+  try{
+    generateReportPDF();
+  }catch(e){
+    console.warn('PDF generation failed', e);
+    alert('Sorry, the PDF could not be created right now. Please try again.');
+  }
+});
+
+function generateReportPDF(){
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('The PDF tool did not load. Please check your internet connection and try again.');
+    return;
+  }
+  const { correct, total, pct } = calcScore();
+  const { realPass, extraPass } = getPassStatus(correct);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const marginX = 50;
+  let y = 60;
+
+  doc.setDrawColor(10,61,26);
+  doc.setLineWidth(2);
+  doc.line(marginX, y, pageWidth-marginX, y);
+  y += 22;
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(10,61,26);
+  doc.text('THE STANDARD SCHOOL SYSTEM', pageWidth/2, y, {align:'center'});
+  y += 18;
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(11);
+  doc.setTextColor(90,90,90);
+  doc.text('Head Faqirian Campus', pageWidth/2, y, {align:'center'});
+  y += 22;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(12);
+  doc.setTextColor(10,61,26);
+  doc.text('OFFICIAL WEEKLY TEST RESULT REPORT', pageWidth/2, y, {align:'center'});
+  y += 10;
+  doc.setDrawColor(10,61,26);
+  doc.setLineWidth(1);
+  doc.line(marginX, y, pageWidth-marginX, y);
+  y += 34;
+
+  const rows = [
+    ['Candidate Name', State.candidate.name],
+    ['Gmail Address', State.candidate.email],
+    ['Course', State.candidate.courseLabel],
+    ['Week', State.candidate.week === 'week2' ? 'Week 2' : 'Week 1'],
+    ['Score', `${correct} / ${total}`],
+    ['Percentage', `${pct}%`],
+    ['Date', new Date().toLocaleDateString()]
+  ];
+  doc.setFontSize(12);
+  rows.forEach(([label, value])=>{
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(90,90,90);
+    doc.text(label, marginX, y);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(20,20,20);
+    doc.text(String(value), marginX+180, y);
+    y += 22;
+  });
+
+  y += 14;
+  let verdictText = 'RESULT: FAIL';
+  let verdictColor = [163,32,47];
+  let fillColor = [253,236,238];
+  if(realPass){ verdictText = 'RESULT: PASS'; verdictColor=[10,107,42]; fillColor=[230,251,234]; }
+  else if(extraPass){ verdictText = 'RESULT: PASS (1 extra mark given)'; verdictColor=[138,100,0]; fillColor=[255,248,230]; }
+
+  doc.setFillColor(fillColor[0], fillColor[1], fillColor[2]);
+  doc.roundedRect(marginX, y, pageWidth-marginX*2, 40, 6, 6, 'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(15);
+  doc.setTextColor(verdictColor[0], verdictColor[1], verdictColor[2]);
+  doc.text(verdictText, pageWidth/2, y+26, {align:'center'});
+  y += 60;
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10.5);
+  doc.setTextColor(90,90,90);
+  let note = 'This candidate met the required passing standard.';
+  if(extraPass) note = 'The candidate scored 6/10 and was given 1 extra mark for being close to the passing mark. Future tests require at least 70% to pass.';
+  if(!realPass && !extraPass) note = 'The candidate did not meet the required passing standard for this test.';
+  const noteLines = doc.splitTextToSize(note, pageWidth-marginX*2);
+  doc.text(noteLines, marginX, y);
+  y += noteLines.length*14 + 30;
+
+  doc.setDrawColor(220,220,220);
+  doc.line(marginX, y, pageWidth-marginX, y);
+  y += 18;
+  doc.setFontSize(9);
+  doc.setTextColor(140,140,140);
+  doc.text('The Standard School System • Secure Assessment Environment • System-generated report', pageWidth/2, y, {align:'center'});
+
+  const safeName = (State.candidate.name || 'candidate').replace(/[^a-z0-9]+/gi,'_');
+  doc.save(`${safeName}_Result_Report.pdf`);
 }
 
 $('toFeedbackBtn').addEventListener('click', ()=>{
@@ -1689,4 +2343,4 @@ window.addEventListener('DOMContentLoaded', ()=>{
 });
 </script>
 </body>
-</html>
+            </html>
